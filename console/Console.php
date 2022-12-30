@@ -55,7 +55,7 @@ class Console
 				break;
 			case 'connect':
 				if (!isset($args[1])) {
-					info('Вы не указали id бота!');
+					info('You didn\'t specify a bot id!');
 					break;
 				}
 				$this->chat = $this->client->setClientId((int)$args[1]);
