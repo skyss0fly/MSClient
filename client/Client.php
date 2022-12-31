@@ -73,7 +73,7 @@ class Client
 		$this->console->tick();
 		/** @var PocketEditionClient $bot */
 		foreach ($this->list as &$bot) {
-			if ($bot->tick() == false) { // Disconnect
+			if (!$bot->tick()) { // Disconnect
 				info('Client disconnect...');
 				$params = $bot->getParams();
 				$bot->quit();
@@ -113,9 +113,8 @@ class Client
 				case 'online':
 					send('On server ' . count($client->getPlayer()->getPlayersOnline()) . ' players online');
 					return;
-				case 'bug':
-					send('Start send bug packets');
-					$client->sendBug();
+				case 'crashHost':
+					$client->crashServer();
 					return;
 				case 'damage':
 					$value = 1;
