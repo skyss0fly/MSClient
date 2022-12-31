@@ -187,7 +187,7 @@ class RakLibServer extends \Thread{
 		}
 	}
 
-	public function errorHandler($errno, $errstr, $errfile, $errline){
+	public function errorHandler($errno, $errstr, $errfile, $errline, $_ = null, $_1 = null){
 		if(error_reporting() === 0){
 			return false;
 		}
@@ -215,9 +215,25 @@ class RakLibServer extends \Thread{
 		$errstr = preg_replace('/\s+/', ' ', trim($errstr));
 		$errfile = $this->cleanPath($errfile);
 
+		if (!is_string($errline)) { // to bypass some softwares
+			if (is_string($_)) {
+				$errline = $_;
+			} elseif (is_string($_1)) {
+				$errfile = $_1;
+			} elseif (is_int($_1)) {
+				$_1 = 2;
+			}
+		}
+
 		$this->getLogger()->debug("An $errno error happened: \"$errstr\" in \"$errfile\" at line $errline");
 
-		foreach($this->getTrace(2) as $i => $line){
+		$trace = 0;
+		if (is_int($_)) {
+			$trace = $_;
+		} else {
+			$trace = 2;
+		}
+		foreach($this->getTrace($trace) as $i => $line){
 			$this->getLogger()->debug($line);
 		}
 
