@@ -13,6 +13,8 @@ Despite this, I still made the repository public (it used to be private) for the
 # TODO:
 - xbox. (so u can use it on xbox auth servers/if we update to a newer ver)
 - cleanup. (clean the code it looks shit)
+- reseting packets so to removing hack(1)
+- fix an error so it doesnt show up on closing
 
 # Donation 
 
