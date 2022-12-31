@@ -8,4 +8,5 @@ class PlayerData {
 	public $skinId;
 	public $skinData;
 	public $playerPos;
+	public $alive;
 }
