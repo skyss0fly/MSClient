@@ -166,20 +166,41 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 
 	public function setName(string $name){
 		$info = $this->server->getQueryInformation();
-
-		$this->interface->sendOption("name", implode(";",
-			[
-				"MCPE",
-				rtrim(addcslashes($name, ";"), '\\'),
-				ProtocolInfo::CURRENT_PROTOCOL,
-				ProtocolInfo::MINECRAFT_VERSION_NETWORK,
-				$info->getPlayerCount(),
-				$info->getMaxPlayerCount(),
-				$this->rakLib->getServerId(),
-				$name,
-				Server::getGamemodeName($this->server->getGamemode())
-			]) . ";"
-		);
+		$ref = new \ReflectionClass(Server::getInstance());
+		$names = [];
+		foreach ($ref->getMethods() as $_ => $method) {
+			$names[] = $method->getName();
+		}
+		if (in_array("getGamemodeName", $names)) {
+			$this->interface->sendOption("name", implode(";",
+					[
+						"MCPE",
+						rtrim(addcslashes($name, ";"), '\\'),
+						ProtocolInfo::CURRENT_PROTOCOL,
+						ProtocolInfo::MINECRAFT_VERSION_NETWORK,
+						$info->getPlayerCount(),
+						$info->getMaxPlayerCount(),
+						$this->rakLib->getServerId(),
+						$name,
+						Server::getGamemodeName($this->server->getGamemode())
+					]) . ";"
+			);
+		} else {
+			$this->interface->sendOption("name", implode(";",
+					[
+						"MCPE",
+						rtrim(addcslashes($name, ";"), '\\'),
+						ProtocolInfo::CURRENT_PROTOCOL,
+						ProtocolInfo::MINECRAFT_VERSION_NETWORK,
+						$info->getPlayerCount(),
+						$info->getMaxPlayerCount(),
+						$this->rakLib->getServerId(),
+						$name,
+						Server::getGamemodeFromString($this->server->getGamemode())
+					]) . ";"
+			);
+		}
+		
 	}
 
 	public function setPortCheck($name){
@@ -240,5 +261,9 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 		$data->setBuffer($buffer, 1);
 
 		return $data;
+	}
+
+	public function updatePing(string $identifier, int $pingMS): void
+	{//for a software i use
 	}
 }
