@@ -374,7 +374,7 @@ class PocketEditionClient extends UDPServerSocket
 					if ($this->damageAll > 0) {
 						$players = $this->player->getPlayersOnline();
 						foreach ($players as $player) {
-							$eid = (int)abs($player['id'] ?? 0);
+							$eid = (int)$player->id ?? 0;
 							if ($eid > 0) {
 								$this->damage($eid);
 							}
@@ -478,6 +478,7 @@ class PocketEditionClient extends UDPServerSocket
 			$this->sendNewIncomingConnection();
 			$this->sendLogin = microtime(true) + (mt_rand(24, 80) * 0.001);
 		} elseif ($packet instanceof IncompatibleProtocolVersion) {
+			var_dump(__CLASS__ . ": " . __FUNCTION__ . ":" . __LINE__);
 			var_dump('need protocol version raklib: ' . $packet->protocolVersion);
 		}
 	}
@@ -832,12 +833,11 @@ class PocketEditionClient extends UDPServerSocket
 						$uuid = $uuid->toString();
 						$eid = (int)$entry[1] ?? 0;
 
-						$entries[$uuid] = [
-							'id' => $eid,
-							'username' => $entry[2] ?? 'Unknown',
-							'skinId' => $entry[3] ?? 'Standard_Custom',
-							'skinData' => $entry[4] ?? '',
-						];
+						$entries[$uuid] = new PlayerData();
+						$entries[$uuid]->id = $eid;
+						$entries[$uuid]->username = $entry[2] ?? 'Unknown';
+						$entries[$uuid]->skinId = $entry[3] ?? 'Standard_Custom';
+						$entries[$uuid]->skinData = $entry[4] ?? '';
 					}
 				}
 				$this->getPlayer()->addPlayersOnline($entries);
@@ -869,6 +869,12 @@ class PocketEditionClient extends UDPServerSocket
 				$x = $packet->x;
 				$y = $packet->y;
 				$z = $packet->z;
+				foreach ($this->getPlayer()->getPlayersOnline() as $player) {
+					if ((int)$player->id === $packet->entityRuntimeId) {
+						$player->playerPos = new PlayerLocation($packet->x, $packet->y, $packet->z, $packet->yaw, $packet->yaw, $packet->pitch);
+						var_dump($player->playerPos);
+					}
+				}
 
 				// radius 10 blocks
 				$distance = ($loc->distance(new Vector3($x, $y, $z)) < 10);
