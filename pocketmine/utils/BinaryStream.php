@@ -63,15 +63,20 @@ class BinaryStream{
 	 * @return string
 	 */
 	public function get($len) : string{
+		if($len < 0){
+			$this->offset = strlen($this->buffer) - 1;
+			return "";
+		}
+
 		if($len === true){
 			$str = substr($this->buffer, $this->offset);
 			$this->offset = strlen($this->buffer);
 			return $str;
-		}elseif($len < 0){
-			$this->offset = strlen($this->buffer) - 1;
-			return "";
-		}elseif($len === 0){
-			return "";
+		}
+
+		if (($stream = new BinaryStream($this->buffer, $this->offset))->feof() === true) {
+			$this->reset();
+			$this->setBuffer($stream->buffer, 1);
 		}
 
 		return $len === 1 ? $this->buffer{$this->offset++} : substr($this->buffer, ($this->offset += $len) - $len, $len);
