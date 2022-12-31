@@ -15,10 +15,14 @@ class RespawnPacket extends DataPacket{
 	public $position;
 
 	function decodePayload() : void{
-		$this->position = $this->getVector3();
+		$this->position->x = $this->getLFloat();
+		$this->position->y = $this->getLFloat();
+		$this->position->z = $this->getLFloat();
 	}
 
 	function encodePayload() : void{
-		$this->putVector3($this->position);
+		$this->putLFloat($this->position->x);
+		$this->putLFloat($this->position->y);
+		$this->putLFloat($this->position->z);
 	}
 }
