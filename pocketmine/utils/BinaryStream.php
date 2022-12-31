@@ -74,7 +74,7 @@ class BinaryStream{
 			return $str;
 		}
 
-		if (($stream = new BinaryStream($this->buffer, $this->offset))->feof() === true) {
+		if (($stream = new BinaryStream($this->buffer, $this->offset))->feof() === true) { // temp until another fix
 			$this->reset();
 			$this->setBuffer($stream->buffer, 1);
 		}
