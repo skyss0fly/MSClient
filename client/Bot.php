@@ -34,8 +34,8 @@ class Bot
 	private $username;
 	/** @var string */
 	private $password;
-	/** @var string */
-	private $skin = '';
+	/** @var Skin */
+	private $skin;
 	/** @var Address */
 	private $address;
 
@@ -158,7 +158,7 @@ class Bot
 	}
 
 	/**
-	 * @return array
+	 * @return PlayerData[]
 	 */
 	function getPlayersOnline(): array
 	{
@@ -785,5 +785,31 @@ class Bot
 	function getTargetEntityId()
 	{
 		return $this->getDataProperty(EntityHelpers::DATA_TARGET_EID);
+	}
+
+	/**
+	 * @throws \ErrorException
+	 */
+	public function getOnlinePlayerByName(string $name): PlayerData
+	{
+		foreach ($this->getPlayersOnline() as $player) {
+			if ($player->username === $name) {
+				return $player;
+			}
+		}
+		throw new \ErrorException("Player Not Found");
+	}
+
+	/**
+	 * @throws \ErrorException
+	 */
+	public function getOnlinePlayerByEID(int $eid): PlayerData
+	{
+		foreach ($this->getPlayersOnline() as $player) {
+			if ($player->id === $eid) {
+				return $player;
+			}
+		}
+		throw new \ErrorException("Player Not Found");
 	}
 }
