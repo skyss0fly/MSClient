@@ -9,6 +9,7 @@ use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use protocol\ContainerSetSlotPacket;
 use protocol\MobEquipmentPacket;
 use protocol\PlayerActionPacket;
+use protocol\RespawnPacket;
 use protocol\UseItemPacket;
 
 class BotHelpers
@@ -57,7 +58,7 @@ class BotHelpers
 		$player = $client->getPlayer();
 		$pk = new PlayerActionPacket();
 		$pk->entityRuntimeId = $player->getId();
-		$pk->action = PlayerActionPacket::ACTION_RESPAWN;
+		$pk->action = $action;
 
 		$pos = $player->getPosition();
 		$pk->x = $pos->getFloorX();
@@ -73,6 +74,10 @@ class BotHelpers
 	 */
 	static function respawn(PocketEditionClient $client)
 	{
+		$pos = $client->getPlayer()->getPosition();
+		$pk = new RespawnPacket();
+		$pk->position = $pos;
+		$client->sendDataPacket($pk);
 		self::action($client, PlayerActionPacket::ACTION_RESPAWN);
 	}
 
