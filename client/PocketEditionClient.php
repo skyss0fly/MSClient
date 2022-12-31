@@ -790,6 +790,11 @@ class PocketEditionClient extends UDPServerSocket
 			$player->setId($packet->entityRuntimeId);
 			$player->setGamemode($packet->playerGamemode);
 			$player->setLocation($packet->x, $packet->y, $packet->z, $packet->yaw, $packet->pitch);
+			foreach ($this->getPlayer()->getPlayersOnline() as $player2) {
+				if ((int)$player2->id === $player->getId()) {
+					$player2->playerPos = new PlayerLocation($packet->x, $packet->y, $packet->z, $packet->yaw, $packet->headYaw, $packet->pitch);
+				}
+			}
 		} elseif ($packet instanceof UpdateAttributesPacket) {
 			$player = $this->player;
 			if ($player->getId() === $packet->entityRuntimeId) {
@@ -871,8 +876,8 @@ class PocketEditionClient extends UDPServerSocket
 				$z = $packet->z;
 				foreach ($this->getPlayer()->getPlayersOnline() as $player) {
 					if ((int)$player->id === $packet->entityRuntimeId) {
-						$player->playerPos = new PlayerLocation($packet->x, $packet->y, $packet->z, $packet->yaw, $packet->yaw, $packet->pitch);
-						var_dump($player->playerPos);
+						$player->playerPos = new PlayerLocation($packet->x, $packet->y, $packet->z, $packet->headYaw, $packet->yaw, $packet->pitch);
+//						var_dump($player->playerPos);
 					}
 				}
 
