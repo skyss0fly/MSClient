@@ -90,7 +90,31 @@ class Console
 				}
 				BotHelpers::moveTo($client, $client->getPlayer()->getPosition()->add(0, (float)$args[1]));
 				break;
+			case "attack":
+				$client = $this->client->getPocketClient();
+				if ($client === false) break;
+				if (!isset($args[1]) || !is_numeric($args[1])) {
+					info('put a entity id');
+					break;
+				}
+				if (!isset($args[2]) || !is_string($args[2])) {
+					info('put true or false to show hand animation or not');
+					return;
+				}
+				if ($args[2] === "true") {
+					$pk = new AnimatePacket();
+					$pk->entityRuntimeId = $client->getId();
+					$pk->action = AnimatePacket::ACTION_SWING_ARM;
+					$client->sendDataPacket($pk);
+				}
 
+				$pk = new EntityEventPacket();
+				$pk->entityRuntimeId = (int)$args[1];
+				$pk->event = EntityEventPacket::HURT_ANIMATION;
+				$client->sendDataPacket($pk);
+				$client->damage($args[1]);
+//				BotHelpers::lookAt($client->getPlayer()->getPosition(), $client->get);
+				break;
 			default:
 				if ($this->chat) $this->client->chat($command);
 				break;
