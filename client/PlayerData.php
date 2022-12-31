@@ -7,5 +7,5 @@ class PlayerData {
 	public $username;
 	public $skinId;
 	public $skinData;
-	public $plauerPos;
+	public $playerPos;
 }
