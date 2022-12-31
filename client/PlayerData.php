@@ -9,4 +9,6 @@ class PlayerData {
 	public $skinData;
 	public $playerPos;
 	public $alive;
+	public $health;
+	public $maxHealth;
 }
