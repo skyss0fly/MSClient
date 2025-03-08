@@ -17,123 +17,26 @@
  * @link http://www.pocketmine.net/
  *
  *
-*/
+ */
 
 declare(strict_types=1);
 
 namespace pocketmine\block;
 
-use pocketmine\item\Item;
-use pocketmine\item\Tool;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\Player;
+use pocketmine\block\utils\WoodTypeTrait;
 
-class WoodenSlab extends Transparent{
+class WoodenSlab extends Slab{
+	use WoodTypeTrait;
 
-	protected $id = self::WOODEN_SLAB;
-
-	protected $doubleId = self::DOUBLE_WOODEN_SLAB;
-
-	public function __construct($meta = 0){
-		$this->meta = $meta;
+	public function getFuelTime() : int{
+		return $this->woodType->isFlammable() ? 300 : 0;
 	}
 
-	public function getHardness(){
-		return 2;
+	public function getFlameEncouragement() : int{
+		return $this->woodType->isFlammable() ? 5 : 0;
 	}
 
-	public function getName(){
-		static $names = [
-			0 => "Oak",
-			1 => "Spruce",
-			2 => "Birch",
-			3 => "Jungle",
-			4 => "Acacia",
-			5 => "Dark Oak",
-			6 => "",
-			7 => ""
-		];
-		return (($this->meta & 0x08) === 0x08 ? "Upper " : "") . $names[$this->meta & 0x07] . " Wooden Slab";
-	}
-
-	protected function recalculateBoundingBox(){
-
-		if(($this->meta & 0x08) > 0){
-			return new AxisAlignedBB(
-				$this->x,
-				$this->y + 0.5,
-				$this->z,
-				$this->x + 1,
-				$this->y + 1,
-				$this->z + 1
-			);
-		}else{
-			return new AxisAlignedBB(
-				$this->x,
-				$this->y,
-				$this->z,
-				$this->x + 1,
-				$this->y + 0.5,
-				$this->z + 1
-			);
-		}
-	}
-
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		$this->meta &= 0x07;
-		if($face === 0){
-			if($target->getId() === $this->id and ($target->getDamage() & 0x08) === 0x08 and ($target->getDamage() & 0x07) === ($this->meta)){
-				$this->getLevel()->setBlock($target, Block::get($this->doubleId, $this->meta), true);
-
-				return true;
-			}elseif($block->getId() === $this->id and ($block->getDamage() & 0x07) === ($this->meta)){
-				$this->getLevel()->setBlock($block, Block::get($this->doubleId, $this->meta), true);
-
-				return true;
-			}else{
-				$this->meta |= 0x08;
-			}
-		}elseif($face === 1){
-			if($target->getId() === $this->id and ($target->getDamage() & 0x08) === 0 and ($target->getDamage() & 0x07) === $this->meta){
-				$this->getLevel()->setBlock($target, Block::get($this->doubleId, $this->meta), true);
-
-				return true;
-			}elseif($block->getId() === $this->id and ($block->getDamage() & 0x07) === $this->meta){
-				$this->getLevel()->setBlock($block, Block::get($this->doubleId, $this->meta), true);
-
-				return true;
-			}
-		}else{ //TODO: collision
-			if($block->getId() === $this->id){
-				if(($block->getDamage() & 0x07) === $this->meta){
-					$this->getLevel()->setBlock($block, Block::get($this->doubleId, $this->meta), true);
-
-					return true;
-				}
-
-				return false;
-			}else{
-				if($fy > 0.5){
-					$this->meta |= 0x08;
-				}
-			}
-		}
-
-		if($block->getId() === $this->id and ($target->getDamage() & 0x07) !== ($this->meta & 0x07)){
-			return false;
-		}
-		$this->getLevel()->setBlock($block, $this, true, true);
-
-		return true;
-	}
-
-	public function getToolType(){
-		return Tool::TYPE_AXE;
-	}
-
-	public function getDrops(Item $item){
-		return [
-			[$this->id, $this->meta & 0x07, 1],
-		];
+	public function getFlammability() : int{
+		return $this->woodType->isFlammable() ? 20 : 0;
 	}
 }
