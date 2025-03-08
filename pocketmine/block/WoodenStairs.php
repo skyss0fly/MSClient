@@ -17,32 +17,26 @@
  * @link http://www.pocketmine.net/
  *
  *
-*/
+ */
 
 declare(strict_types=1);
 
 namespace pocketmine\block;
 
-use pocketmine\item\Item;
-use pocketmine\item\Tool;
+use pocketmine\block\utils\WoodTypeTrait;
 
 class WoodenStairs extends Stair{
+	use WoodTypeTrait;
 
-	public function getHardness(){
-		return 2;
+	public function getFuelTime() : int{
+		return $this->woodType->isFlammable() ? 300 : 0;
 	}
 
-	public function getResistance(){
-		return 15;
+	public function getFlameEncouragement() : int{
+		return 5;
 	}
 
-	public function getToolType(){
-		return Tool::TYPE_AXE;
-	}
-
-	public function getDrops(Item $item){
-		return [
-			[$this->id, 0, 1],
-		];
+	public function getFlammability() : int{
+		return 20;
 	}
 }
